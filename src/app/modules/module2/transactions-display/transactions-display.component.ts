@@ -34,6 +34,11 @@ export class TransactionsDisplayComponent implements OnInit {
     private transactionService: TransactionService) { }
 
   ngOnInit(): void {
+    this.transactionsSub = this.transactionService.transactions$.subscribe(
+      data => {
+        this.transactions = data;
+      }
+    );
     this.transactionService.getTransactions();
   }
 
@@ -107,17 +112,14 @@ export class TransactionsDisplayComponent implements OnInit {
 
   ngAfterViewInit() {
 
-    this.transactionsSub = this.transactionService.transactions$.subscribe(
-      data => {
-        this.transactions = data;
-      }
-    );
-
     // debounce keystroke events    
     this.formIdFilterCtrlSub = this.idFilterControl.valueChanges
       .pipe(debounceTime(300))
       .subscribe(newValue => this.search(newValue));
+    
   }
+
+  
 
   ngOnDestroy() {
     this.formIdFilterCtrlSub.unsubscribe();
