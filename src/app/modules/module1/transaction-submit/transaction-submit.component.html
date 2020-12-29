@@ -1,0 +1,77 @@
+<nz-card nzTitle="Transaction Information">
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="accountToDebit">Internal Account To Debit:
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please select account">
+                <nz-select formControlName="accountToDebit" id="accountToDebit">
+                    <nz-option *ngFor="let account of accountsToDebit" [nzValue]="account.number"
+                        [nzLabel]="account.number">
+                    </nz-option>
+                </nz-select>
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="amount" nzRequired>Amount</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" [nzValidateStatus]="validateForm.controls['amount']"
+                nzErrorTip="Please input only numbers">
+                <nz-input-group nzCompact>
+                    <input nz-input formControlName="amount" id="amount" />
+                    <nz-select formControlName="amountSuffixe" id="amountSuffixe">
+                        <nz-option *ngFor="let currencyType of currencyTypes" [nzLabel]="currencyType.label"
+                            [nzValue]="currencyType.value"></nz-option>
+                    </nz-select>
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="fee">Fee paid by receiver:</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-switch formControlName="fee" id="fee"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="destination">Destination</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input account">
+                <nz-select formControlName="accountToAccredit" id="accountToAccredit">
+                    <nz-option *ngFor="let account of accountsToAccredit" [nzValue]="account.number"
+                        [nzLabel]="account.number">
+                    </nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item formArrayName="metadatas"
+            *ngFor="let metadata of validateForm.get('metadatas')['controls']; let i = index;">
+            <nz-form-label [nzSm]="6" [nzXs]="12" [ngClass]="{'visible-label':i == 0,'hide-label':i != 0}">Metadata
+            </nz-form-label>
+            <div nz-row [formGroupName]="i">
+                <div nz-col>
+                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input key is required">
+                        <input nz-input placeholder="Key #{{i+1}}" formControlName="key"
+                            (keydown.enter)="addMetadata($event)" />
+                    </nz-form-control>
+                </div>
+                <div nz-col>
+                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input value is required">
+                        <input nz-input placeholder="Value #{{i+1}}" formControlName="value"
+                            (keydown.enter)="addMetadata($event)" />
+                    </nz-form-control>
+                </div>
+                <div nz-col>
+                    <button nz-button nzType="primary" nzSize="8" [disabled]="!metadata.value.key || !metadata.value.value"
+                        (click)="deleteMetadata(i,$event)"><i nz-icon nzType="delete"></i></button>
+                </div>
+            </div>
+
+        </nz-form-item>
+        <nz-form-item nz-row class="register-area">
+            <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                <button nz-button nzType="secondary">Cancel</button>
+            </nz-form-control>
+            <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                <button nz-button nzType="primary" [disabled]="validateForm.invalid">Create transaction</button>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</nz-card>

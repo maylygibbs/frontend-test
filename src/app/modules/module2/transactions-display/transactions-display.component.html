@@ -1,0 +1,47 @@
+<nz-card nzTitle="Transactions">
+
+    <nz-table #transactionTable nzShowPagination nzShowSizeChanger
+        (nzCurrentPageDataChange)="onCurrentPageDataChange($event)" [nzData]="transactions">
+        <thead>
+            <tr>
+                <th [nzChecked]="checked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="onAllChecked($event)">
+                </th>
+
+                <th nzCustomFilter>
+                    Id
+                    <nz-filter-trigger [(nzVisible)]="visible" [nzDropdownMenu]="menu">
+                        <i nz-icon nzType="search"></i>
+                    </nz-filter-trigger>
+                </th>
+                <th>Date</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let transaction of transactionTable.data">
+                <td [nzChecked]="setOfCheckedId.has(transaction.id)" [nzDisabled]="transaction.disabled"
+                    (nzCheckedChange)="onItemChecked(transaction.id, $event)"></td>
+                <td [innerHtml]="transaction.id"></td>
+                <td [innerHtml]="transaction.creationDate | date:'dd.MM.yyyy HH:mm:ss'"></td>
+                <td [innerHtml]="transaction.currencyType.value+' '+transaction.currencyType.label"></td>
+                <td [innerHtml]="transaction.amount+' '+transaction.currencyType.value"></td>
+                <td>
+                    <button nz-button nzType="primary" nzSize="8" (click)="deleteTransaction(transaction,$event)"><i
+                            nz-icon nzType="delete"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+        <div class="ant-table-filter-dropdown">
+
+            <div class="search-box">
+                <input type="text" nz-input placeholder="Search transaction id"
+                    [formControl]="idFilterControl" />
+            </div>
+
+        </div>
+    </nz-dropdown-menu>
+</nz-card>
