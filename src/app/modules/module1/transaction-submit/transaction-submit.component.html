@@ -1,4 +1,4 @@
-<nz-card nzTitle="Transaction Information">
+<nz-card nzTitle="Transaction Information" [nzBordered]="true">
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
         <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="accountToDebit">Internal Account To Debit:
@@ -16,12 +16,15 @@
             <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="amount" nzRequired>Amount</nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="24" [nzValidateStatus]="validateForm.controls['amount']"
                 nzErrorTip="Please input only numbers">
-                <nz-input-group nzCompact>
+                <nz-input-group [nzAddOnAfter]="addOnAfterTemplate">
                     <input nz-input formControlName="amount" id="amount" />
-                    <nz-select formControlName="amountSuffixe" id="amountSuffixe">
-                        <nz-option *ngFor="let currencyType of currencyTypes" [nzLabel]="currencyType.label"
-                            [nzValue]="currencyType.value"></nz-option>
-                    </nz-select>
+
+                    <ng-template #addOnAfterTemplate>
+                        <nz-select formControlName="amountSuffixe" id="amountSuffixe">
+                            <nz-option *ngFor="let currencyType of currencyTypes" [nzLabel]="currencyType.label"
+                                [nzValue]="currencyType.value"></nz-option>
+                        </nz-select>
+                    </ng-template>
                 </nz-input-group>
             </nz-form-control>
         </nz-form-item>
@@ -59,17 +62,16 @@
                     </nz-form-control>
                 </div>
                 <div nz-col>
-                    <button nz-button nzType="primary" nzSize="8" [disabled]="!metadata.value.key || !metadata.value.value"
-                        (click)="deleteMetadata(i,$event)"><i nz-icon nzType="delete"></i></button>
+                    <button nz-button nzType="primary" nzSize="8"
+                        [disabled]="!metadata.value.key || !metadata.value.value" (click)="deleteMetadata(i,$event)"><i
+                            nz-icon nzType="delete"></i></button>
                 </div>
             </div>
 
         </nz-form-item>
         <nz-form-item nz-row class="register-area">
-            <nz-form-control [nzSpan]="14" [nzOffset]="6">
-                <button nz-button nzType="secondary">Cancel</button>
-            </nz-form-control>
-            <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <nz-form-control [nzSpan]="20">
+                <button nz-button nzType="secondary" (click)="reset($event)">Cancel</button>
                 <button nz-button nzType="primary" [disabled]="validateForm.invalid">Create transaction</button>
             </nz-form-control>
         </nz-form-item>

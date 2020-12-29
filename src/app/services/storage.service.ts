@@ -6,10 +6,10 @@ import { Transaction } from '../models/transaction';
 })
 export class StorageService {
 
-/**
- * get item of localStorage
- * @param key 
- */
+  /**
+   * get item of localStorage
+   * @param key 
+   */
   getItem(key:string):Array<any>{
     let transactions = localStorage.getItem(key);
     if(transactions){
@@ -19,15 +19,20 @@ export class StorageService {
     }
   }
 
-/**
- * set item localStorage
- * @param key 
- * @param transactions 
- */
+  /**
+   * set item localStorage
+   * @param key 
+   * @param transactions 
+   */
   setItem(key:string,transactions:Array<any>){
     localStorage.setItem(key, JSON.stringify(transactions));   
   }
 
+  /**
+   * update transactions source
+   * @param key 
+   * @param transactions 
+   */
   updateItem(key:string,transactions:Array<any>){
     let transactionsTemp = localStorage.getItem(key);
     if(transactionsTemp){

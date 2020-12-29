@@ -3,7 +3,7 @@ import { Transaction } from '../../../models/transaction';
 import { TransactionService } from '../../../services/transaction.service';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
-import {debounceTime} from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-transactions-display',
@@ -23,23 +23,17 @@ export class TransactionsDisplayComponent implements OnInit {
   loading = false;
   indeterminate = false;
 
-  idFilterValue:string;
+  idFilterValue: string;
   idFilterControl = new FormControl();
+  transactionsSub: Subscription;
   formIdFilterCtrlSub: Subscription;
-  resizeSub:   Subscription;
+  resizeSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService) { }
 
   ngOnInit(): void {
-
-    this.transactionService.transactions$.subscribe(
-      data => {
-        this.transactions = data;
-        console.log('transactions', this.transactions);
-      }
-    );
     this.transactionService.getTransactions();
   }
 
@@ -105,7 +99,7 @@ export class TransactionsDisplayComponent implements OnInit {
     this.refreshCheckedStatus();
   }
 
-  search(filter:string): void {
+  search(filter: string): void {
     this.transactionService.getTransactions();
     this.visible = false;
     this.transactions = this.transactions.filter((item: Transaction) => String(item.id).indexOf(filter) !== -1);
@@ -113,14 +107,21 @@ export class TransactionsDisplayComponent implements OnInit {
 
   ngAfterViewInit() {
 
-        // debounce keystroke events    
-        this.formIdFilterCtrlSub = this.idFilterControl.valueChanges
-        .pipe(debounceTime(300))
-        .subscribe(newValue => this.search(newValue));
+    this.transactionsSub = this.transactionService.transactions$.subscribe(
+      data => {
+        this.transactions = data;
+      }
+    );
+
+    // debounce keystroke events    
+    this.formIdFilterCtrlSub = this.idFilterControl.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(newValue => this.search(newValue));
   }
 
   ngOnDestroy() {
     this.formIdFilterCtrlSub.unsubscribe();
+    this.transactionsSub.unsubscribe();
   }
 
 }

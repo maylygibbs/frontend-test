@@ -5,6 +5,7 @@ import { CurrencyType } from '../../../models/currency-type';
 import { Account } from '../../../models/account';
 import { TransactionService } from '../../../services/transaction.service';
 import { TransactionMapper } from '../../../mappers/transaction-mapper';
+import { Subscription, Observable } from 'rxjs';
 
 import { Transaction } from '../../../models/transaction';
 
@@ -14,29 +15,26 @@ import { Transaction } from '../../../models/transaction';
   styleUrls: ['./transaction-submit.component.scss']
 })
 export class TransactionSubmitComponent implements OnInit {
-  transactions:Array<Transaction>;
+  transactions: Array<Transaction>;
   validateForm!: FormGroup;
   currencyTypes: Array<CurrencyType>;
   accountsToDebit: Array<Account>;
   accountsToAccredit: Array<Account>;
   metadatas: FormArray;
- 
+  transactionsSub: Subscription;
+  initialValues:any;
 
-  
+
+
 
   constructor(
     private fb: FormBuilder,
     private inMemoryService: InMemoryService,
-    private transactionService:TransactionService) { }
+    private transactionService: TransactionService) { }
 
   ngOnInit(): void {
 
-    this.transactionService.transactions$.subscribe(
-      data => {
-        this.transactions = data;
-        console.log('transactions',this.transactions);
-      }
-    );
+
     this.transactionService.getTransactions();
 
     this.accountsToDebit = this.inMemoryService.accountToDebit;
@@ -49,24 +47,25 @@ export class TransactionSubmitComponent implements OnInit {
       amountSuffixe: ['$'],
       accountToAccredit: [null, [Validators.required]],
       fee: [false, [Validators.required]],
-      metadatas: this.fb.array([ this.createMetadata() ])
-      
+      metadatas: this.fb.array([this.createMetadata()])
+
     });
+    this.initialValues = this.validateForm.value;
 
   }
-/**
- * create metadata control
- */
+  /**
+   * create metadata control
+   */
   createMetadata(): FormGroup {
     return this.fb.group({
       key: [null, [Validators.required]],
       value: [null, [Validators.required]]
     });
   }
-/**
- * add new metadata obj
- * @param e
- */
+  /**
+   * add new metadata obj
+   * @param e
+   */
   addMetadata(e?: MouseEvent): void {
     if (e) {
       e.preventDefault();
@@ -79,7 +78,7 @@ export class TransactionSubmitComponent implements OnInit {
    * delete metadata control
    * @param metadata 
    */
-  deleteMetadata(i:number,e?: MouseEvent){
+  deleteMetadata(i: number, e?: MouseEvent) {
     if (e) {
       e.preventDefault();
     }
@@ -92,9 +91,28 @@ export class TransactionSubmitComponent implements OnInit {
 
 
   submitForm() {
-    console.log('validateForm',this.validateForm.value);
-      this.transactionService.create(TransactionMapper.mapperToModel(this.transactions.length,this.validateForm.value,this.currencyTypes))
-      this.validateForm.reset();
+    console.log('validateForm', this.validateForm.value);
+    this.transactionService.create(TransactionMapper.mapperToModel(this.transactions.length, this.validateForm.value, this.currencyTypes))
+    this.validateForm.reset(this.initialValues);
+  }
+
+  reset(e?:Event){
+    if (e) {
+      e.preventDefault();
+    }
+    this.validateForm.reset(this.initialValues);
+  }
+
+  ngAfterViewInit() {  
+    this.transactionsSub = this.transactionService.transactions$.subscribe(
+      data => {
+        this.transactions = data;
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.transactionsSub.unsubscribe();
   }
 
 }

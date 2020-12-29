@@ -23,7 +23,10 @@ export class TransactionService extends StorageService{
     this.setTransactions$(transactions);
     
   }
-
+  /**
+   * create transaction item
+   * @param transaction 
+   */
   create(transaction:Transaction){
 
     let transactions = this.getItem('transactions');
@@ -31,9 +34,11 @@ export class TransactionService extends StorageService{
     this.setItem('transactions',transactions);
     this.setTransactions$(transactions);
   }
-
+  /**
+   * delete transaction item
+   * @param transaction 
+   */
   delete(transaction:Transaction){
-    debugger
     let transactions = this.getItem('transactions');
     const index = transactions.findIndex(trx => trx.id === transaction.id);
     transactions = transactions.splice(index,1);

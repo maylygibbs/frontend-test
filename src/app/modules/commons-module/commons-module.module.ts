@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 
 import { CommonsModuleRoutingModule } from './commons-module-routing.module';
 import { CommonsLayoutComponent } from './commons-layout/commons-layout.component';
+import { HomeLayoutComponent } from './home-layout/home-layout.component';
 
 
 @NgModule({
-  declarations: [CommonsLayoutComponent],
+  declarations: [CommonsLayoutComponent, HomeLayoutComponent],
   imports: [
     CommonModule,
     CommonsModuleRoutingModule
